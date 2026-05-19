@@ -181,7 +181,7 @@ public partial class SammasatiDbContext : DbContext
                 .HasPrecision(10, 2)
                 .HasColumnName("monto");
 
-            entity.HasOne(d => d.IdAlumnoNavigation).WithMany(p => p.PagosCuota)
+            entity.HasOne(d => d.IdAlumnoNavigation).WithMany(p => p.PagosCuotas)
                 .HasForeignKey(d => d.IdAlumno)
                 .HasConstraintName("pagos_cuotas_ibfk_1");
         });

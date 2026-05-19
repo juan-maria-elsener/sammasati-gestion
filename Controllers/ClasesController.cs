@@ -119,6 +119,33 @@ namespace Sammasati.App.Controllers
             return Ok(clasesDetalladas);
         }
 
+        // GET: api/Clases/buscar/{dia}
+        [HttpGet("buscar/{dia}")]
+        public async Task<IActionResult> BuscarClasesPorDia(string dia)
+        {
+            // Usamos .Contains() para que si buscás "Lunes", te traiga también "Lunes y Miércoles"
+            var clasesFiltradas = await _context.Clases
+                .Where(c => c.Dias.Contains(dia))
+                .Select(c => new
+                {
+                    c.IdClase,
+                    c.Dias,
+                    c.Horario,
+                    Profesor = c.IdProfesorNavigation != null ? c.IdProfesorNavigation.Nombre : "Sin Profesor",
+                    Espacio = c.IdEspacioNavigation != null ? c.IdEspacioNavigation.NombreDireccion : "Sin Espacio",
+                    Modalidad = c.IdModalidadNavigation != null ? c.IdModalidadNavigation.Nombre : "Sin Modalidad"
+                })
+                .ToListAsync();
+
+            // Si escriben un día que no existe o no tiene clases, devolvemos un 404 claro
+            if (!clasesFiltradas.Any())
+            {
+                return NotFound($"No se encontraron clases para el día: {dia}");
+            }
+
+            return Ok(clasesFiltradas);
+        }
+
         private bool ClaseExists(int id)
         {
             return _context.Clases.Any(e => e.IdClase == id);

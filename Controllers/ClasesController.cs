@@ -99,6 +99,26 @@ namespace Sammasati.App.Controllers
             return NoContent();
         }
 
+        // GET: api/Clases/detalles
+        [HttpGet("detalles")]
+        public async Task<IActionResult> GetClasesDetalles()
+        {
+            
+            var clasesDetalladas = await _context.Clases
+                .Select(c => new
+                {
+                    c.IdClase,
+                    c.Dias,
+                    c.Horario,
+                    Profesor = c.IdProfesorNavigation != null ? c.IdProfesorNavigation.Nombre : "Sin Profesor",
+                    Espacio = c.IdEspacioNavigation != null ? c.IdEspacioNavigation.NombreDireccion : "Sin Espacio",
+                    Modalidad = c.IdModalidadNavigation != null ? c.IdModalidadNavigation.Nombre : "Sin Modalidad"
+                })
+                .ToListAsync();
+
+            return Ok(clasesDetalladas);
+        }
+
         private bool ClaseExists(int id)
         {
             return _context.Clases.Any(e => e.IdClase == id);

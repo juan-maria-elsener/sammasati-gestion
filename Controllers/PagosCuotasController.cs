@@ -108,6 +108,44 @@ namespace Sammasati.App.Controllers
                 .ToListAsync();
         }
 
+        // PUT: api/PagosCuotas/cobrar/5
+        [HttpPut("cobrar/{id}")]
+        public async Task<IActionResult> CobrarCuota(int id)
+        {
+            // Buscamos el registro de pago específico por su ID
+            var pago = await _context.PagosCuotas.FindAsync(id);
+
+            if (pago == null)
+            {
+                return NotFound($"No se encontró ningún registro de pago con el ID: {id}");
+            }
+
+            // Cambiamos el estado a Abonado de forma automática
+            pago.Estado = "Abonado";
+
+            // Le avisamos a Entity Framework que este registro sufrió modificaciones
+            _context.Entry(pago).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PagosCuotaExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            // Devolvemos un mensaje de éxito junto con el objeto actualizado
+            return Ok(new { Mensaje = "Cuota cobrada con éxito", PagoActualizado = pago });
+        }
+
         private bool PagosCuotaExists(int id)
         {
             return _context.PagosCuotas.Any(e => e.IdPago == id);

@@ -98,6 +98,16 @@ namespace Sammasati.App.Controllers
             return NoContent();
         }
 
+        // GET: api/PagosCuotas/pendientes
+        [HttpGet("pendientes")]
+        public async Task<ActionResult<IEnumerable<PagosCuota>>> GetPagosPendientes()
+        {
+            // Uso LINQ para filtrar en la base de datos antes de traer los datos a la memoria
+            return await _context.PagosCuotas
+                .Where(p => p.Estado == "Pendiente")
+                .ToListAsync();
+        }
+
         private bool PagosCuotaExists(int id)
         {
             return _context.PagosCuotas.Any(e => e.IdPago == id);

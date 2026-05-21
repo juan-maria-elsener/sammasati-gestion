@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Sammasati.App.Models;
 
@@ -19,5 +20,6 @@ public partial class PagosCuota
 
     public decimal? Monto { get; set; }
 
-    public virtual Alumno IdAlumnoNavigation { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Alumno? IdAlumnoNavigation { get; set; }
 }

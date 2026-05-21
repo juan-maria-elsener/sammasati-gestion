@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Sammasati.App.Models;
 
@@ -13,7 +14,9 @@ public partial class Inscripcione
 
     public string? Estado { get; set; }
 
-    public virtual Alumno IdAlumnoNavigation { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Alumno? IdAlumnoNavigation { get; set; } = null!;
 
-    public virtual Clase IdClaseNavigation { get; set; } = null!;
+    [JsonIgnore]
+    public virtual Clase? IdClaseNavigation { get; set; } = null!;
 }

@@ -74,12 +74,31 @@ namespace Sammasati.App.Controllers
 
         // POST: api/Inscripciones
         [HttpPost]
-        public async Task<ActionResult<Inscripcione>> PostInscripcione(Inscripcione inscripcione)
+        public async Task<ActionResult<Inscripcione>> PostInscripcion(Inscripcione inscripcion)
         {
-            _context.Inscripciones.Add(inscripcione);
+            // 1. Contamos cuántos alumnos ya están activos en esta clase exacta
+            var alumnosActivos = await _context.Inscripciones
+                .CountAsync(i => i.IdClase == inscripcion.IdClase && i.Estado == "Activa");
+
+            // 2. Definimos el límite de colchonetas físicas (podés cambiar este número)
+            int cupoMaximo = 17;
+
+            // 3. REGLA DE NEGOCIO: Si ya está lleno, lo mandamos a lista de espera
+            if (alumnosActivos >= cupoMaximo)
+            {
+                inscripcion.Estado = "Lista de Espera";
+            }
+            else
+            {
+                // Si hay lugar, le forzamos el estado a Activa por las dudas
+                inscripcion.Estado = "Activa";
+            }
+
+            _context.Inscripciones.Add(inscripcion);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetInscripcione), new { id = inscripcione.IdInscripcion }, inscripcione);
+            // Devolvemos la inscripción guardada (para que React sepa qué estado le tocó al final)
+            return Ok(inscripcion);
         }
 
         // DELETE: api/Inscripciones/5

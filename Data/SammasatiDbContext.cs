@@ -33,6 +33,8 @@ public partial class SammasatiDbContext : DbContext
 
     public virtual DbSet<Asistencia> Asistencias { get; set; } = null!;
 
+    public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         
